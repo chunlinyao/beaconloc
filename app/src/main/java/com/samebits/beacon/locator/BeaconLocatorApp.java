@@ -115,7 +115,7 @@ public class BeaconLocatorApp extends Application implements BootstrapNotifier, 
         mBeaconManager.setMaxTrackingAge(10000);
         mBeaconManager.setRegionExitPeriod(180000);
 
-        mBeaconManager.setBackgroundScanPeriod(2000L);          // default is 10000L
+        mBeaconManager.setBackgroundScanPeriod(3000L);          // default is 10000L
         mBeaconManager.setForegroundBetweenScanPeriod(0L);      // default is 0L
         mBeaconManager.setForegroundScanPeriod(1100L);          // Default is 1100L
 
@@ -176,10 +176,11 @@ public class BeaconLocatorApp extends Application implements BootstrapNotifier, 
     @Override
     public void didEnterRegion(Region region) {
         RegionName regName = RegionName.parseString(region.getUniqueId());
-
+        Log.d(Constants.TAG, "didEnterRegion " + region);
         if (regName.isApplicationRegion()) {
             if (regName.getEventType() == ActionBeacon.EventType.EVENT_NEAR_YOU) {
                 try {
+                    mDataManager.updateBeaconDistance(regName.getBeaconId(), 99);
                     mBeaconManager.startRangingBeaconsInRegion(region);
                 } catch (RemoteException e) {
                     Log.e(Constants.TAG, "Error start ranging region: " + regName, e);
@@ -198,7 +199,7 @@ public class BeaconLocatorApp extends Application implements BootstrapNotifier, 
     public void didExitRegion(Region region) {
 
         RegionName regName = RegionName.parseString(region.getUniqueId());
-
+        Log.d(Constants.TAG, "didExitRegion " + region);
         if (regName.isApplicationRegion()) {
             if (regName.getEventType() == ActionBeacon.EventType.EVENT_NEAR_YOU) {
                 try {
@@ -225,6 +226,7 @@ public class BeaconLocatorApp extends Application implements BootstrapNotifier, 
 
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+        Log.d(Constants.TAG, "didRangeBeaconsInRegion " + beacons + "|" + region.getUniqueId());
         if (beacons != null && beacons.size() > 0 && region != null) {
             RegionName regName = RegionName.parseString(region.getUniqueId());
             if (regName.isApplicationRegion()) {
