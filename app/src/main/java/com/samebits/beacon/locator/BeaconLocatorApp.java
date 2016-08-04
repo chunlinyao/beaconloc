@@ -235,8 +235,10 @@ public class BeaconLocatorApp extends Application implements BootstrapNotifier, 
                     while (iterator.hasNext()) {
                         Beacon beacon = iterator.next();
                         TrackedBeacon tracked = mDataManager.getBeacon(regName.getBeaconId());
-                        mDataManager.updateBeaconDistance(regName.getBeaconId(), beacon.getDistance());
-                        if (tracked != null && 5D <= tracked.getDistance()) {
+                        if (beacon.getDistance() > 5D || beacon.getDistance() <= 3D) {
+                            mDataManager.updateBeaconDistance(regName.getBeaconId(), beacon.getDistance());
+                        }
+                        if (tracked != null && tracked.getDistance() > 5D) {
                             if (BeaconUtil.isInProximity(IManagedBeacon.ProximityType.NEAR, beacon.getDistance())
                                     || BeaconUtil.isInProximity(IManagedBeacon.ProximityType.IMMEDIATE, beacon.getDistance())) {
 
